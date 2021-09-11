@@ -1,7 +1,7 @@
 import { controller, httpPost, httpGet, interfaces, requestParam, httpDelete } from "inversify-express-utils";
 import express from "express";
 import { AttendanceBaseController } from "./AttendanceBaseController"
-import { VisitSession, Visit, Session } from "../models"
+import { VisitSession, Visit, Session, ServiceTime } from "../models"
 import { Permissions } from "../helpers";
 
 @controller("/visitsessions")
@@ -21,13 +21,11 @@ export class VisitSessionController extends AttendanceBaseController {
                     const session: Session = await this.repositories.session.load(au.churchId, sessionId);
                     visit = { addedBy: au.id, checkinTime: new Date(), churchId: au.churchId, personId, visitDate: session.sessionDate };
 
-                    // todo: replace this code
-                    /*
                     if (session.serviceTimeId === null) visit.groupId = session.groupId;
                     else {
                         const st: ServiceTime = await this.repositories.serviceTime.load(au.churchId, session.serviceTimeId);
                         visit.serviceId = st.serviceId;
-                    }*/
+                    }
                     await this.repositories.visit.save(visit);
                     newVisit = true;
                 }
