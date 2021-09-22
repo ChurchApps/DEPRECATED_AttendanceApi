@@ -2,7 +2,6 @@ export { CustomBaseController, ErrorController, NoteController, } from "../apiBa
 
 export { AttendanceRecordController } from "./AttendanceRecordController";
 export { CampusController } from "./CampusController";
-export { ChurchController } from "./ChurchController";
 export { GroupServiceTimeController } from "./GroupServiceTimeController";
 export { ServiceController } from "./ServiceController";
 export { ServiceTimeController } from "./ServiceTimeController";
