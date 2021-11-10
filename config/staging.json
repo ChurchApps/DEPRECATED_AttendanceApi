@@ -1,6 +1,6 @@
 {
   "appEnv": "staging",
-  "appName": "AccessApi",
+  "appName": "AttendanceApi",
   "contentRoot": "https://content.staging.churchapps.org",
   "fileStore": "S3",
   "mailSystem": "SES",

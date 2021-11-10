@@ -1,6 +1,6 @@
 {
   "appEnv": "dev",
-  "appName": "AccessApi",
+  "appName": "AttendanceApi",
   "contentRoot": "http://localhost:3402",
   "fileStore": "disk",
   "mailSystem": "SMTP",

@@ -1,6 +1,6 @@
 {
   "appEnv": "prod",
-  "appName": "AccessApi",
+  "appName": "AttendanceApi",
   "contentRoot": "https://content.churchapps.org",
   "fileStore": "S3",
   "mailSystem": "SES",
