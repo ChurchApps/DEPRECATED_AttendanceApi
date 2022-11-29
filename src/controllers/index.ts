@@ -1,4 +1,4 @@
-export { CustomBaseController, ErrorController, NoteController, } from "../apiBase"
+export { CustomBaseController, ErrorController } from "../apiBase"
 
 export { AttendanceRecordController } from "./AttendanceRecordController";
 export { CampusController } from "./CampusController";
