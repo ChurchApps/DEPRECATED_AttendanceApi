@@ -57,6 +57,19 @@ export class VisitRepository {
         return DB.query(sql, params);
     }
 
+    public async loadLastLoggedDate(churchId: string, serviceId: string, peopleIds: string[]) {
+        let result = new Date();
+        result.setHours(0, 0, 0, 0);
+
+        const sql = "SELECT max(visitDate) as visitDate FROM visits WHERE churchId=? AND serviceId = ? AND personId IN (" + ArrayHelper.fillArray("?", peopleIds.length).join(", ") + ")";
+        const params = [churchId, serviceId].concat(peopleIds);
+        const data = await DB.queryOne(sql, params);
+
+        if (data?.visitDate) result = new Date(data.visitDate);
+        return result;
+    }
+
+
     public loadForPerson(churchId: string, personId: string) {
         return DB.query("SELECT * FROM visits WHERE churchId=? AND personId=?", [churchId, personId]);
     }

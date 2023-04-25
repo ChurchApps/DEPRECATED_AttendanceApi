@@ -41,11 +41,15 @@ export class VisitController extends AttendanceBaseController {
                 const peopleIdList = req.query.peopleIds.toString().split(",");
                 const currentDate = new Date();
                 currentDate.setHours(0, 0, 0, 0);
+
                 const peopleIds: string[] = [];
                 JSON.stringify(peopleIds);
                 peopleIdList.forEach(id => peopleIds.push(id));
 
-                const visits = (peopleIds.length === 0) ? [] : this.repositories.visit.convertAllToModel(au.churchId, await this.repositories.visit.loadByServiceDatePeopleIds(au.churchId, serviceId, currentDate, peopleIds));
+                const lastDate = await this.repositories.visit.loadLastLoggedDate(au.churchId, serviceId, peopleIds);
+
+                const visits = (peopleIds.length === 0) ? [] : this.repositories.visit.convertAllToModel(au.churchId, await this.repositories.visit.loadByServiceDatePeopleIds(au.churchId, serviceId, lastDate, peopleIds));
+
                 const visitIds: string[] = [];
                 if (visits.length > 0) {
                     visits.forEach(v => visitIds.push(v.id));
@@ -66,7 +70,19 @@ export class VisitController extends AttendanceBaseController {
                         })
                     }
 
+                    // If previous week, make a copy (remove the ids)
+                    visits.forEach(v => {
+                      if (v.visitDate !== currentDate) {
+                        v.id=null;
+                        v.visitSessions.forEach(vs => {
+                          vs.visitId = null;
+                          vs.id =  null;
+                        });
+                      }
+                    });
+
                 }
+
                 return result;
             }
 
