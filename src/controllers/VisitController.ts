@@ -44,7 +44,7 @@ export class VisitController extends AttendanceBaseController {
 
                 const peopleIds: string[] = [];
                 JSON.stringify(peopleIds);
-                peopleIdList.forEach(id => peopleIds.push(id));
+                peopleIdList?.forEach(id => peopleIds.push(id));
 
                 const lastDate = await this.repositories.visit.loadLastLoggedDate(au.churchId, serviceId, peopleIds);
 
@@ -52,17 +52,17 @@ export class VisitController extends AttendanceBaseController {
 
                 const visitIds: string[] = [];
                 if (visits.length > 0) {
-                    visits.forEach(v => visitIds.push(v.id));
+                    visits?.forEach(v => visitIds.push(v.id));
                     const visitSessions = this.repositories.visitSession.convertAllToModel(au.churchId, await this.repositories.visitSession.loadByVisitIds(au.churchId, visitIds));
                     if (visitSessions.length > 0) {
                         const sessionIds: string[] = [];
                         visitSessions.forEach(vs => sessionIds.push(vs.sessionId));
                         const sessions = this.repositories.session.convertAllToModel(au.churchId, await this.repositories.session.loadByIds(au.churchId, sessionIds));
-                        visits.forEach(v => {
+                        visits?.forEach(v => {
                             v.visitSessions = [];
-                            visitSessions.forEach(vs => {
+                            visitSessions?.forEach(vs => {
                                 if (vs.visitId === v.id) {
-                                    sessions.forEach(s => { if (s.id === vs.sessionId) vs.session = s });
+                                    sessions?.forEach(s => { if (s.id === vs.sessionId) vs.session = s });
                                     v.visitSessions.push(vs)
                                 }
                             });
@@ -71,10 +71,10 @@ export class VisitController extends AttendanceBaseController {
                     }
 
                     // If previous week, make a copy (remove the ids)
-                    visits.forEach(v => {
+                    visits?.forEach(v => {
                       if (v.visitDate !== currentDate) {
                         v.id=null;
-                        v.visitSessions.forEach(vs => {
+                        v.visitSessions?.forEach(vs => {
                           vs.visitId = null;
                           vs.id =  null;
                         });
