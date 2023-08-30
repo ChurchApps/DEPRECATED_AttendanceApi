@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { DB } from "../apiBase/db";
+import { DB } from "@churchapps/apihelper";
 import { AttendanceRecord } from "../models";
 
 @injectable()
@@ -77,56 +77,5 @@ export class AttendanceRepository {
         const params = [churchId, personId];
         return DB.query(sql, params);
     }
-
-
-    // UNVALIDATED CODE BELOW
-
-    /*
-        public async load(churchId: number, campusId: number, serviceId: number, serviceTimeId: number, categoryName: string, groupId: number, startDate: Date, endDate: Date, groupBy: string, trend: boolean) {
-            const field = this.getGroupByField(groupBy);
-            const params = [];
-            params.push(churchId);
-            params.push(DateTimeHelper.toMysqlDate(startDate));
-            params.push(DateTimeHelper.toMysqlDate(endDate));
-
-            let sql = "SELECT ";
-            if (trend) sql += "week(v.visitDate,0) as week, ";
-            sql += field + " as " + groupBy + ", Count(distinct(p.id)) as count"
-                + " FROM visitSessions vs"
-                + " INNER JOIN visits v on v.id = vs.visitId"
-                + " INNER JOIN sessions s on s.id = vs.sessionId"
-                + " INNER JOIN people p on p.id = v.personId"
-                + " INNER JOIN `groups` g on g.id = s.groupId"
-                + " LEFT OUTER JOIN serviceTimes st on st.id = s.serviceTimeId"
-                + " LEFT OUTER JOIN services ser on ser.id = st.serviceId"
-                + " LEFT OUTER JOIN campuses c on c.id = ser.campusId"
-                + " WHERE p.churchId = ? AND v.visitDate BETWEEN ? AND ?";
-
-            if (campusId > 0) { sql += " AND ser.campusId=?"; params.push(campusId); }
-            if (serviceId > 0) { sql += " AND ser.id=?"; params.push(serviceId); }
-            if (serviceTimeId > 0) { sql += " AND st.id=?"; params.push(serviceTimeId); }
-            if (categoryName !== "") { sql += " AND g.categoryName=?"; params.push(categoryName); }
-            if (groupId > 0) { sql += " AND g.id=?"; params.push(groupId); }
-            sql += " GROUP BY ";
-            if (trend) sql += "week(v.visitDate, 0), ";
-            sql += field + " ORDER BY ";
-            if (trend) sql += "week(v.visitDate, 0), ";
-            sql += field;
-            return DB.query(sql, params);
-        }
-
-        public getGroupByField(groupBy: string) {
-            let result = "c.name";
-            switch (groupBy) {
-                case "groupName": result = "g.name"; break;
-                case "campusName": result = "c.name"; break;
-                case "serviceName": result = "ser.name"; break;
-                case "serviceTimeName": result = "st.name"; break;
-                case "categoryName": result = "g.categoryName"; break;
-                case "gender": result = "p.gender"; break;
-            }
-            return result;
-        }*/
-
 
 }

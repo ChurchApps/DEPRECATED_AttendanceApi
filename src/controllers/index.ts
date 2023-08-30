@@ -1,4 +1,4 @@
-export { CustomBaseController, ErrorController } from "../apiBase"
+export { CustomBaseController, ErrorController } from "@churchapps/apihelper"
 
 export { AttendanceRecordController } from "./AttendanceRecordController";
 export { CampusController } from "./CampusController";

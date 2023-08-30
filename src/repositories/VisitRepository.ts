@@ -1,7 +1,7 @@
 import { injectable } from "inversify";
-import { DB } from "../apiBase/db";
+import { DB } from "@churchapps/apihelper";
 import { Visit } from "../models";
-import { DateTimeHelper, UniqueIdHelper, ArrayHelper } from '../helpers'
+import { DateHelper, UniqueIdHelper, ArrayHelper } from '../helpers'
 
 @injectable()
 export class VisitRepository {
@@ -12,8 +12,8 @@ export class VisitRepository {
 
     private async create(visit: Visit) {
         visit.id = UniqueIdHelper.shortId();
-        const visitDate = DateTimeHelper.toMysqlDate(visit.visitDate);
-        const checkinTime = DateTimeHelper.toMysqlDate(visit.checkinTime);
+        const visitDate = DateHelper.toMysqlDate(visit.visitDate);
+        const checkinTime = DateHelper.toMysqlDate(visit.checkinTime);
         const sql = "INSERT INTO visits (id, churchId, personId, serviceId, groupId, visitDate, checkinTime, addedBy) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
         const params = [visit.id, visit.churchId, visit.personId, visit.serviceId, visit.groupId, visitDate, checkinTime, visit.addedBy];
         await DB.query(sql, params);
@@ -21,8 +21,8 @@ export class VisitRepository {
     }
 
     private async update(visit: Visit) {
-        const visitDate = DateTimeHelper.toMysqlDate(visit.visitDate);
-        const checkinTime = DateTimeHelper.toMysqlDate(visit.checkinTime);
+        const visitDate = DateHelper.toMysqlDate(visit.visitDate);
+        const checkinTime = DateHelper.toMysqlDate(visit.checkinTime);
         const sql = "UPDATE visits SET personId=?, serviceId=?, groupId=?, visitDate=?, checkinTime=?, addedBy=? WHERE id=? and churchId=?";
         const params = [visit.personId, visit.serviceId, visit.groupId, visitDate, checkinTime, visit.addedBy, visit.id, visit.churchId];
         await DB.query(sql, params);
@@ -51,7 +51,7 @@ export class VisitRepository {
     }
 
     public loadByServiceDatePeopleIds(churchId: string, serviceId: string, visitDate: Date, peopleIds: string[]) {
-        const vsDate = DateTimeHelper.toMysqlDate(visitDate);
+        const vsDate = DateHelper.toMysqlDate(visitDate);
         const sql = "SELECT * FROM visits WHERE churchId=? AND serviceId = ? AND visitDate = ? AND personId IN (" + ArrayHelper.fillArray("?", peopleIds.length).join(", ") + ")";
         const params = [churchId, serviceId, vsDate].concat(peopleIds);
         return DB.query(sql, params);
