@@ -1,14 +1,15 @@
 import "reflect-metadata";
 import dotenv from "dotenv";
 import { Environment } from "../src/helpers/Environment";
-import { Pool } from "../src/apiBase/pool";
-import { DBCreator } from "../src/apiBase/tools/DBCreator"
+import { Pool, DBCreator } from "@churchapps/apihelper";
 
 const init = async () => {
   dotenv.config();
-  Environment.init(process.env.APP_ENV);
-  console.log("Connecting");
-  Pool.initPool();
+  Environment.init(process.env.APP_ENV).then(() => {
+    console.log("Connecting");
+    Pool.initPool();
+  });
+  
 
   const attendanceTables: { title: string, file: string }[] = [
     { title: "Campuses", file: "campuses.mysql" },

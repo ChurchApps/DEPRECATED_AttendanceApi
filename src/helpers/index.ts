@@ -1,2 +1,2 @@
-export { ArrayHelper, DateTimeHelper, UniqueIdHelper } from "../apiBase/helpers";
+export { ArrayHelper, DateHelper, UniqueIdHelper } from "@churchapps/apihelper";
 export * from "./Permissions";
