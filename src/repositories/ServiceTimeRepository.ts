@@ -38,7 +38,7 @@ export class ServiceTimeRepository {
     }
 
     public loadNamesWithCampusService(churchId: string) {
-        return DB.query("SELECT st.*, concat(c.name, ' - ', s.name, ' - ', st.name) as longName FROM serviceTimes st INNER JOIN services s on s.Id=st.serviceId INNER JOIN campuses c on c.Id=s.campusId WHERE s.churchId=? AND st.removed=0 ORDER BY c.name, s.name, st.name;", [churchId]);
+        return DB.query("SELECT st.*, concat(c.name, ' - ', s.name, ' - ', st.name) as longName FROM serviceTimes st INNER JOIN services s on s.Id=st.serviceId INNER JOIN campuses c on c.Id=s.campusId WHERE s.churchId=? AND st.removed=0 AND s.removed=0 AND c.removed=0 ORDER BY c.name, s.name, st.name;", [churchId]);
     }
 
     public loadNamesByServiceId(churchId: string, serviceId: string) {
