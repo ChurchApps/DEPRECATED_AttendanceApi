@@ -41,6 +41,23 @@ export class AttendanceRecordController extends AttendanceBaseController {
         });
     }
 
+    @httpGet("/search")
+    public async search(req: express.Request<{}, {}, null>, res: express.Response): Promise<interfaces.IHttpActionResult> {
+        return this.actionWrapper(req, res, async (au) => {
+            if (!au.checkAccess(Permissions.attendance.view)) return this.json({}, 401);
+            else {
+                const campusId = (req.query.campusId === undefined) ? "" : req.query.campusId.toString();
+                const from = (req.query.from === undefined) ? "" : req.query.from.toString();
+                const to = (req.query.to === undefined) ? "" : req.query.to.toString();
+                let result = null;
+                if (campusId !== "") {
+                    result = await this.repositories.attendance.loadForCampus(au.churchId, campusId, from, to);
+                }
+                return result;
+            }
+        });
+    }
+
     @httpGet("/")
     public async load(req: express.Request<{}, {}, null>, res: express.Response): Promise<interfaces.IHttpActionResult> {
         return this.actionWrapper(req, res, async (au) => {

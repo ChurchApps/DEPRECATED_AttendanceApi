@@ -78,4 +78,15 @@ export class AttendanceRepository {
         return DB.query(sql, params);
     }
 
+    public loadForCampus(churchId: string, campusId: string, from: string, to: string) {
+        const sql = "SELECT v.*, c.id as campusId, c.name as campusName"
+        + " FROM visits v"
+        + " INNER JOIN services ser on ser.id = v.serviceId"
+        + " INNER JOIN campuses c on c.id = ser.campusId"
+        + " WHERE v.churchId=? AND ser.campusId=?"
+        + " AND v.visitDate BETWEEN ? AND ?";
+        const params = [churchId, campusId, from, to];
+        return DB.query(sql, params);
+    }
+
 }
