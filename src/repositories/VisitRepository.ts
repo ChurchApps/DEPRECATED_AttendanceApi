@@ -41,6 +41,10 @@ export class VisitRepository {
         return DB.query("SELECT * FROM visits WHERE churchId=?;", [churchId]);
     }
 
+    public loadAllByDate(churchId: string, startDate: Date, endDate: Date) {
+        return DB.query("SELECT * FROM visits WHERE churchId=? AND visitDate BETWEEN ? AND ?;", [churchId, DateHelper.toMysqlDate(startDate), DateHelper.toMysqlDate(endDate)]);
+    }
+
     public loadForSessionPerson(churchId: string, sessionId: string, personId: string) {
         const sql = "SELECT v.*"
             + " FROM sessions s"
