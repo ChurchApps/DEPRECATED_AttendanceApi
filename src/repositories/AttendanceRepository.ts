@@ -89,4 +89,14 @@ export class AttendanceRepository {
         return DB.query(sql, params);
     }
 
+    public loadForService(churchId: string, serviceId: string, startDate: Date, endDate: Date) {
+        const sql = "SELECT v.*, ser.name as serviceName"
+        + " FROM visits v"
+        + " INNER JOIN services ser on ser.id = v.serviceId"
+        + " WHERE v.churchId=? AND v.serviceId=?"
+        + " AND v.visitDate BETWEEN ? AND ?";
+        const params = [churchId, serviceId, DateHelper.toMysqlDate(startDate), DateHelper.toMysqlDate(endDate)];
+        return DB.query(sql, params);
+    }
+
 }

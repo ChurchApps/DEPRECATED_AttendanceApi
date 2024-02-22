@@ -48,10 +48,13 @@ export class AttendanceRecordController extends AttendanceBaseController {
             else {
                 let result = null;
                 const campusId = (req.query.campusId === undefined) ? "" : req.query.campusId.toString();
+                const serviceId = (req.query.serviceId === undefined) ? "" : req.query.serviceId.toString();
                 const startDate = (req.query.startDate !== undefined) && new Date(req.query.startDate.toString());
                 const endDate = (req.query.endDate !== undefined) && new Date(req.query.endDate.toString());
                 if (campusId !== "") {
                     result = await this.repositories.attendance.loadForCampus(au.churchId, campusId, startDate, endDate);
+                } else if (serviceId !== "") {
+                    result = await this.repositories.attendance.loadForService(au.churchId, serviceId, startDate, endDate);
                 } else {
                     result = await this.repositories.visit.loadAllByDate(au.churchId, startDate, endDate);
                 }
