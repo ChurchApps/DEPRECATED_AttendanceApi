@@ -50,16 +50,23 @@ export class AttendanceRecordController extends AttendanceBaseController {
                 const campusId = (req.query.campusId === undefined) ? "" : req.query.campusId.toString();
                 const serviceId = (req.query.serviceId === undefined) ? "" : req.query.serviceId.toString();
                 const serviceTimeId = (req.query.serviceTimeId === undefined) ? "" : req.query.serviceTimeId.toString();
+                const groupId = (req.query.groupId === undefined) ? "" : req.query.groupId.toString();
                 const startDate = (req.query.startDate !== undefined) && new Date(req.query.startDate.toString());
                 const endDate = (req.query.endDate !== undefined) && new Date(req.query.endDate.toString());
 
                 if (campusId !== "") {
-                    result = await this.repositories.attendance.loadForCampus(au.churchId, campusId, startDate, endDate);
-                } else if (serviceId !== "") {
-                    result = await this.repositories.attendance.loadForService(au.churchId, serviceId, startDate, endDate);
-                } else if (serviceTimeId !== "") {
-                    result = await this.repositories.attendance.loadForServiceTimeId(au.churchId, serviceTimeId, startDate, endDate);
-                } else {
+                    result = await this.repositories.attendance.loadByCampusId(au.churchId, campusId, startDate, endDate);
+                }
+                else if (serviceId !== "") {
+                    result = await this.repositories.attendance.loadByServiceId(au.churchId, serviceId, startDate, endDate);
+                }
+                else if (serviceTimeId !== "") {
+                    result = await this.repositories.attendance.loadByServiceTimeId(au.churchId, serviceTimeId, startDate, endDate);
+                }
+                else if (groupId !== "") {
+                    result = await this.repositories.attendance.loadByGroupId(au.churchId, groupId, startDate, endDate);
+                }
+                else {
                     result = await this.repositories.visit.loadAllByDate(au.churchId, startDate, endDate);
                 }
 
