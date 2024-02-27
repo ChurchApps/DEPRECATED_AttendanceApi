@@ -78,7 +78,7 @@ export class AttendanceRepository {
         return DB.query(sql, params);
     }
 
-    public loadForCampus(churchId: string, campusId: string, startDate: Date, endDate: Date) {
+    public loadByCampusId(churchId: string, campusId: string, startDate: Date, endDate: Date) {
         const sql = "SELECT v.*, c.id as campusId, c.name as campusName"
         + " FROM visits v"
         + " INNER JOIN services ser on ser.id = v.serviceId"
@@ -86,6 +86,39 @@ export class AttendanceRepository {
         + " WHERE v.churchId=? AND ser.campusId=?"
         + " AND v.visitDate BETWEEN ? AND ?";
         const params = [churchId, campusId, DateHelper.toMysqlDate(startDate), DateHelper.toMysqlDate(endDate)];
+        return DB.query(sql, params);
+    }
+
+    public loadByServiceId(churchId: string, serviceId: string, startDate: Date, endDate: Date) {
+        const sql = "SELECT v.*, ser.name as serviceName"
+        + " FROM visits v"
+        + " INNER JOIN services ser on ser.id = v.serviceId"
+        + " WHERE v.churchId=? AND v.serviceId=?"
+        + " AND v.visitDate BETWEEN ? AND ?";
+        const params = [churchId, serviceId, DateHelper.toMysqlDate(startDate), DateHelper.toMysqlDate(endDate)];
+        return DB.query(sql, params);
+    }
+
+    public loadByServiceTimeId(churchId: string, serviceTimeId: string, startDate: Date, endDate: Date) {
+        const sql = "SELECT v.*, st.name as serviceTimeName"
+        + " FROM visits v"
+        + " INNER JOIN visitSessions vs on vs.visitId = v.id"
+        + " INNER JOIN sessions s on s.id = vs.sessionId"
+        + " LEFT OUTER JOIN serviceTimes st on st.id = s.serviceTimeId"
+        + " WHERE v.churchId=? AND st.id=?"
+        + " AND v.visitDate BETWEEN ? AND ?";
+        const params = [churchId, serviceTimeId, DateHelper.toMysqlDate(startDate), DateHelper.toMysqlDate(endDate)];
+        return DB.query(sql, params);
+    }
+
+    public loadByGroupId(churchId: string, groupId: string, startDate: Date, endDate: Date) {
+        const sql = "SELECT v.*"
+        + " FROM visits v"
+        + " INNER JOIN visitSessions vs on vs.visitId = v.id"
+        + " INNER JOIN sessions s on s.id = vs.sessionId"
+        + " WHERE v.churchId=? AND s.groupId=?"
+        + " AND v.visitDate BETWEEN ? AND ?";
+        const params = [churchId, groupId, DateHelper.toMysqlDate(startDate), DateHelper.toMysqlDate(endDate)];
         return DB.query(sql, params);
     }
 
