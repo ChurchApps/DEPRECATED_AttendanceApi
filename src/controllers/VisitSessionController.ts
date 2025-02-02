@@ -82,7 +82,10 @@ export class VisitSessionController extends AttendanceBaseController {
     public async delete(@requestParam("id") id: string, req: express.Request<{}, {}, null>, res: express.Response): Promise<interfaces.IHttpActionResult> {
         return this.actionWrapper(req, res, async (au) => {
             if (!au.checkAccess(Permissions.attendance.edit)) return this.json({}, 401);
-            else await this.repositories.visitSession.delete(au.churchId, id);
+            else {
+                await this.repositories.visitSession.delete(au.churchId, id);
+                return this.json({});
+            }
         });
     }
 
@@ -100,6 +103,7 @@ export class VisitSessionController extends AttendanceBaseController {
                     const visitSessions = await this.repositories.visitSession.loadByVisitId(au.churchId, visit.id);
                     if (visitSessions.length === 0) await this.repositories.visit.delete(au.churchId, visit.id);
                 }
+                return this.json({});
 
             }
         });
