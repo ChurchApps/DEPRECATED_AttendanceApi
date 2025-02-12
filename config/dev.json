@@ -2,6 +2,7 @@
   "appEnv": "dev",
   "appName": "AttendanceApi",
   "contentRoot": "http://localhost:3402",
+  "membershipApi": "http://localhost:8083",
   "fileStore": "disk",
   "mailSystem": "",
   "s3Bucket": ""
