@@ -1,8 +1,10 @@
 import { controller, httpPost, httpGet, interfaces, requestParam, httpDelete } from "inversify-express-utils";
 import express from "express";
+import axios from "axios";
 import { AttendanceBaseController } from "./AttendanceBaseController"
 import { VisitSession, Visit, Session, ServiceTime } from "../models"
 import { Permissions } from "../helpers";
+import { Environment } from "../helpers/Environment";
 
 @controller("/visitsessions")
 export class VisitSessionController extends AttendanceBaseController {
@@ -38,6 +40,40 @@ export class VisitSessionController extends AttendanceBaseController {
                 return {};
             }
         });
+    }
+
+    @httpGet("/download/:sessionId")
+    public async download(@requestParam("sessionId") sessionId: string, req: express.Request<{}, {}, any>, res: express.Response): Promise<interfaces.IHttpActionResult> {
+        return this.actionWrapper(req, res, async (au) => {
+            if (!au.checkAccess(Permissions.attendance.view)) return this.json({}, 401);
+            else {
+                const result: { id: string, personId: string, visitId: string, sessionDate: Date, personName: string, status: "present" | "absent" }[] = [];
+                const apiUrl = Environment.membershipApi;
+                const visitSessions = await this.repositories.visitSession.loadForSession(au.churchId, sessionId);
+                const session: Session = await this.repositories.session.load(au.churchId, sessionId);
+
+                if (visitSessions.length > 0) {
+                    const url = apiUrl + `/groupmembers/basic/${session.groupId}`;
+                    const config = { headers: { Authorization: "Bearer " + au.jwt } }
+                    const groupMembers: any = ((await axios.get(url, config)).data);
+
+                    const visitSessionPersonIds = new Set(visitSessions.map((session: any) => session.personId));
+                    groupMembers?.forEach((member: any) => {
+                        const status = visitSessionPersonIds.has(member.personId) ? "present" : "absent";
+                        const visitSession = visitSessions.find((session: any) => session.personId === member.personId);
+                        result.push({
+                            id: visitSession ? visitSession.id : "",
+                            personId: member.personId,
+                            visitId: visitSession ? visitSession.visitId : "",
+                            sessionDate: session.sessionDate,
+                            personName: member.displayName,
+                            status
+                        });
+                    });
+                }
+                return result;
+            }
+        })
     }
 
     @httpGet("/:id")
