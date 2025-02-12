@@ -47,12 +47,12 @@ export class VisitSessionController extends AttendanceBaseController {
         return this.actionWrapper(req, res, async (au) => {
             if (!au.checkAccess(Permissions.attendance.view)) return this.json({}, 401);
             else {
+                const result: { id: string, personId: string, visitId: string, sessionDate: Date, personName: string, status: "present" | "absent" }[] = [];
                 const apiUrl = Environment.membershipApi;
                 const visitSessions = await this.repositories.visitSession.loadForSession(au.churchId, sessionId);
                 const session: Session = await this.repositories.session.load(au.churchId, sessionId);
 
                 if (visitSessions.length > 0) {
-                    const result: { id: string, personId: string, visitId: string, sessionDate: Date, personName: string, status: "present" | "absent" }[] = [];
                     const url = apiUrl + `/groupmembers/basic/${session.groupId}`;
                     const config = { headers: { Authorization: "Bearer " + au.jwt } }
                     const groupMembers: any = ((await axios.get(url, config)).data);
@@ -70,8 +70,8 @@ export class VisitSessionController extends AttendanceBaseController {
                             status
                         });
                     });
-                    return result;
                 }
+                return result;
             }
         })
     }
