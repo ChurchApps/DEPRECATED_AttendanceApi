@@ -9,7 +9,7 @@ const init = async () => {
     console.log("Connecting");
     Pool.initPool();
   });
-  
+
 
   const attendanceTables: { title: string, file: string }[] = [
     { title: "Campuses", file: "campuses.mysql" },
@@ -17,11 +17,11 @@ const init = async () => {
     { title: "Service Times", file: "serviceTimes.mysql" },
     { title: "Group Service Times", file: "groupServiceTimes.mysql" },
     { title: "Sessions", file: "sessions.mysql" },
+    { title: "Settings", file: "settings.mysql" },
     { title: "Visits", file: "visits.mysql" },
     { title: "Visit Sessions", file: "visitSessions.mysql" }
   ];
 
-  await DBCreator.init(["Settings"]);
   await initTables("Attendance", attendanceTables);
 }
 
