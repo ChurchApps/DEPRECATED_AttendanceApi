@@ -4,11 +4,11 @@ import { Environment } from "../src/helpers/Environment";
 import { Pool, DBCreator } from "@churchapps/apihelper";
 
 const init = async () => {
+
   dotenv.config();
-  Environment.init(process.env.APP_ENV).then(() => {
-    console.log("Connecting");
-    Pool.initPool();
-  });
+  await Environment.init(process.env.APP_ENV?.toString() || "");
+  console.log("Connecting");
+  Pool.initPool();
 
 
   const attendanceTables: { title: string, file: string }[] = [
