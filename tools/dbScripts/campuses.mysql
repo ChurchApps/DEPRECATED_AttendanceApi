@@ -12,4 +12,4 @@ CREATE TABLE `campuses` (
   `removed` bit(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `churchId` (`churchId`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB;

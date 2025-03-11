@@ -14,4 +14,4 @@ CREATE TABLE `visits` (
   KEY `personId` (`personId`),
   KEY `serviceId` (`serviceId`),
   KEY `groupId` (`groupId`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB;

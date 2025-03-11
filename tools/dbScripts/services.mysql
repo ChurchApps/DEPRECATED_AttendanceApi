@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS `services`;
+
 CREATE TABLE `services` (
   `id` char(11) NOT NULL,
   `churchId` char(11) DEFAULT NULL,
@@ -8,4 +9,4 @@ CREATE TABLE `services` (
   PRIMARY KEY (`id`),
   KEY `churchId` (`churchId`),
   KEY `campusId` (`campusId`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB;
