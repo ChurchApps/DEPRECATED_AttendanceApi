@@ -9,4 +9,4 @@ CREATE TABLE `groupServiceTimes` (
   KEY `churchId` (`churchId`),
   KEY `groupId` (`groupId`),
   KEY `serviceTimeId` (`serviceTimeId`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB;
