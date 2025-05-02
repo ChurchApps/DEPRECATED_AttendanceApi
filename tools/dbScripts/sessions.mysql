@@ -10,5 +10,7 @@ CREATE TABLE `sessions` (
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `churchId` (`churchId`),
   KEY `groupId` (`groupId`),
-  KEY `serviceTimeId` (`serviceTimeId`)
+  KEY `serviceTimeId` (`serviceTimeId`),
+  KEY `idx_church_session_date` (`churchId`, `sessionDate`),
+  KEY `idx_church_group_service` (`churchId`, `groupId`, `serviceTimeId`)
 ) ENGINE=InnoDB;

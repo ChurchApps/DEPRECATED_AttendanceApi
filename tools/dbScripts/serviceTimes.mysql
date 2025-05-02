@@ -9,5 +9,6 @@ CREATE TABLE `serviceTimes` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `churchId` (`churchId`),
-  KEY `serviceId` (`serviceId`)
+  KEY `serviceId` (`serviceId`),
+  KEY `idx_church_service_removed` (`churchId`, `serviceId`, `removed`)
 ) ENGINE=InnoDB;

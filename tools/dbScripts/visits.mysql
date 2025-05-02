@@ -14,5 +14,7 @@ CREATE TABLE `visits` (
   KEY `churchId` (`churchId`),
   KEY `personId` (`personId`),
   KEY `serviceId` (`serviceId`),
-  KEY `groupId` (`groupId`)
+  KEY `groupId` (`groupId`),
+  KEY `idx_church_visit_date` (`churchId`, `visitDate`),
+  KEY `idx_church_person` (`churchId`, `personId`)
 ) ENGINE=InnoDB;
