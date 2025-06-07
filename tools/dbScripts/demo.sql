@@ -3,10 +3,10 @@ INSERT INTO campuses (id, churchId, name) VALUES
 ('CAM00000001', 'CHU00000001', 'Main Campus');
 
 -- Demo Services
-INSERT INTO services (id, churchId, campusId, name, active) VALUES 
-('SER00000001', 'CHU00000001', 'CAM00000001', 'Sunday Morning Service', 1),
-('SER00000002', 'CHU00000001', 'CAM00000001', 'Sunday Evening Service', 1),
-('SER00000003', 'CHU00000001', 'CAM00000001', 'Wednesday Evening Service', 1);
+INSERT INTO services (id, churchId, campusId, name, removed) VALUES 
+('SER00000001', 'CHU00000001', 'CAM00000001', 'Sunday Morning Service', 0),
+('SER00000002', 'CHU00000001', 'CAM00000001', 'Sunday Evening Service', 0),
+('SER00000003', 'CHU00000001', 'CAM00000001', 'Wednesday Evening Service', 0);
 
 -- Demo Service Times
 INSERT INTO serviceTimes (id, churchId, serviceId, name, time, displayOrder) VALUES 
