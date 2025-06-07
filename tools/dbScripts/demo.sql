@@ -364,7 +364,7 @@ INSERT INTO visitSessions (id, churchId, visitId, sessionId) VALUES
 -- Williams Family 10:30 AM Service
 ('VSE00000181', 'CHU00000001', 'VIS00000125', 'SES00000034'), -- Jennifer Williams - Main Service
 ('VSE00000182', 'CHU00000001', 'VIS00000126', 'SES00000034'), -- Christopher Williams - Main Service
-('VSE00000183', 'CHU00000001', 'VIS00000127', 'SES00000034'), -- Emma Williams - Main Service
+('VSE00000183', 'CHU00000001', 'VIS00000127', 'SES00000034'); -- Emma Williams - Main Service
 
 -- May 2025 Visits
 INSERT INTO visits (id, churchId, personId, visitDate, visitStatus) VALUES
@@ -447,7 +447,7 @@ INSERT INTO visits (id, churchId, personId, visitDate, visitStatus) VALUES
 ('VIS00000177', 'CHU00000001', 'PER00000007', '2025-05-25', 'Attended'), -- Patricia Johnson
 ('VIS00000178', 'CHU00000001', 'PER00000008', '2025-05-25', 'Attended'), -- Elizabeth Johnson
 ('VIS00000179', 'CHU00000001', 'PER00000009', '2025-05-25', 'Attended'), -- David Johnson
-('VIS00000180', 'CHU00000001', 'PER00000010', '2025-05-25', 'Attended'), -- Margaret Johnson
+('VIS00000180', 'CHU00000001', 'PER00000010', '2025-05-25', 'Attended'); -- Margaret Johnson
 
 -- Williams Family (Away for Memorial Day Weekend)
 -- No visits recorded
