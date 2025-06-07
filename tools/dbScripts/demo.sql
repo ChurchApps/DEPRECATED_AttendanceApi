@@ -266,7 +266,7 @@ INSERT INTO visits (id, churchId, personId, visitDate, visitStatus) VALUES
 -- Williams Family (Regular attendees - 10:30 AM only)
 ('VIS00000125', 'CHU00000001', 'PER00000011', '2025-04-27', 'Attended'), -- Jennifer Williams
 ('VIS00000126', 'CHU00000001', 'PER00000012', '2025-04-27', 'Attended'), -- Christopher Williams
-('VIS00000127', 'CHU00000001', 'PER00000013', '2025-04-27', 'Attended'), -- Emma Williams
+('VIS00000127', 'CHU00000001', 'PER00000013', '2025-04-27', 'Attended'); -- Emma Williams
 
 -- April VisitSessions
 INSERT INTO visitSessions (id, churchId, visitId, sessionId) VALUES
