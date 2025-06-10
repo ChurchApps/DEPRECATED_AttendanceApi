@@ -1,3 +1,9 @@
+DROP PROCEDURE IF EXISTS resetDemoData;
+
+-- Create stored procedure to reset demo data
+DELIMITER //
+CREATE PROCEDURE resetDemoData()
+BEGIN
 -- Truncate all tables in correct order to respect foreign key constraints
 TRUNCATE TABLE visitSessions;
 TRUNCATE TABLE visits;
@@ -1464,3 +1470,9 @@ INSERT INTO visitSessions (id, churchId, visitId, sessionId) VALUES
 ('VST00000336', 'CHU00000001', 'VIS00000521', 'SES00000028'); -- Michael Smith
 
 -- Note: VisitSessions have been added above to match all visit records with appropriate sessions
+
+END //
+DELIMITER ;
+
+-- Execute the stored procedure to populate demo data
+CALL resetDemoData();
