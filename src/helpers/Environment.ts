@@ -4,14 +4,12 @@ import path from "path";
 import { EnvironmentBase } from "@churchapps/apihelper";
 
 export class Environment extends EnvironmentBase {
-
   static membershipApi: string;
 
   static async init(environment: string) {
     let file = "dev.json";
     if (environment === "staging") file = "staging.json";
     if (environment === "prod") file = "prod.json";
-
 
     const relativePath = "../../config/" + file;
     const physicalPath = path.resolve(__dirname, relativePath);
@@ -22,5 +20,4 @@ export class Environment extends EnvironmentBase {
 
     this.membershipApi = data.membershipApi;
   }
-
 }

@@ -5,22 +5,40 @@ import { UniqueIdHelper } from "../helpers";
 
 @injectable()
 export class CampusRepository {
-
   public save(campus: Campus) {
     return campus.id ? this.update(campus) : this.create(campus);
   }
 
   private async create(campus: Campus) {
     campus.id = UniqueIdHelper.shortId();
-    const sql = "INSERT INTO campuses (id, churchId, name, address1, address2, city, state, zip, removed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0);";
-    const params = [campus.id, campus.churchId, campus.name, campus.address1, campus.address2, campus.city, campus.state, campus.zip];
+    const sql =
+      "INSERT INTO campuses (id, churchId, name, address1, address2, city, state, zip, removed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0);";
+    const params = [
+      campus.id,
+      campus.churchId,
+      campus.name,
+      campus.address1,
+      campus.address2,
+      campus.city,
+      campus.state,
+      campus.zip
+    ];
     await DB.query(sql, params);
     return campus;
   }
 
   private async update(campus: Campus) {
     const sql = "UPDATE campuses SET name=?, address1=?, address2=?, city=?, state=?, zip=? WHERE id=? and churchId=?";
-    const params = [campus.name, campus.address1, campus.address2, campus.city, campus.state, campus.zip, campus.id, campus.churchId];
+    const params = [
+      campus.name,
+      campus.address1,
+      campus.address2,
+      campus.city,
+      campus.state,
+      campus.zip,
+      campus.id,
+      campus.churchId
+    ];
     await DB.query(sql, params);
     return campus;
   }
@@ -38,14 +56,22 @@ export class CampusRepository {
   }
 
   public convertToModel(churchId: string, data: any) {
-    const result: Campus = { id: data.id, name: data.name, address1: data.address1, address2: data.address2, city: data.city, state: data.state, zip: data.zip, importKey: data.importKey };
+    const result: Campus = {
+      id: data.id,
+      name: data.name,
+      address1: data.address1,
+      address2: data.address2,
+      city: data.city,
+      state: data.state,
+      zip: data.zip,
+      importKey: data.importKey
+    };
     return result;
   }
 
   public convertAllToModel(churchId: string, data: any[]) {
     const result: Campus[] = [];
-    data.forEach(d => result.push(this.convertToModel(churchId, d)));
+    data.forEach((d) => result.push(this.convertToModel(churchId, d)));
     return result;
   }
-
 }

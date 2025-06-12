@@ -5,103 +5,97 @@ import { Permissions } from "../helpers";
 
 @controller("/attendancerecords")
 export class AttendanceRecordController extends AttendanceBaseController {
-    @httpGet("/tree")
-    public async tree(req: express.Request<{}, {}, null>, res: express.Response): Promise<interfaces.IHttpActionResult> {
-        return this.actionWrapper(req, res, async (au) => {
-            const data = await this.repositories.attendance.loadTree(au.churchId);
-            return this.repositories.attendance.convertAllToModel(au.churchId, data);
-        });
-    }
+  @httpGet("/tree")
+  public async tree(req: express.Request<{}, {}, null>, res: express.Response): Promise<interfaces.IHttpActionResult> {
+    return this.actionWrapper(req, res, async (au) => {
+      const data = await this.repositories.attendance.loadTree(au.churchId);
+      return this.repositories.attendance.convertAllToModel(au.churchId, data);
+    });
+  }
 
-    @httpGet("/trend")
-    public async trend(req: express.Request<{}, {}, null>, res: express.Response): Promise<interfaces.IHttpActionResult> {
-        return this.actionWrapper(req, res, async (au) => {
-            if (!au.checkAccess(Permissions.attendance.viewSummary)) return this.json({}, 401);
-            else {
-                const campusId = (req.query.campusId === undefined) ? "" : req.query.campusId.toString();
-                const serviceId = (req.query.serviceId === undefined) ? "" : req.query.serviceId.toString();
-                const serviceTimeId = (req.query.serviceTimeId === undefined) ? "" : req.query.serviceTimeId.toString();
-                const groupId = (req.query.groupId === undefined) ? "" : req.query.groupId.toString();
-                const data = await this.repositories.attendance.loadTrend(au.churchId, campusId, serviceId, serviceTimeId, groupId);
-                return data;
-            }
-        });
-    }
+  @httpGet("/trend")
+  public async trend(req: express.Request<{}, {}, null>, res: express.Response): Promise<interfaces.IHttpActionResult> {
+    return this.actionWrapper(req, res, async (au) => {
+      if (!au.checkAccess(Permissions.attendance.viewSummary)) return this.json({}, 401);
+      else {
+        const campusId = req.query.campusId === undefined ? "" : req.query.campusId.toString();
+        const serviceId = req.query.serviceId === undefined ? "" : req.query.serviceId.toString();
+        const serviceTimeId = req.query.serviceTimeId === undefined ? "" : req.query.serviceTimeId.toString();
+        const groupId = req.query.groupId === undefined ? "" : req.query.groupId.toString();
+        const data = await this.repositories.attendance.loadTrend(
+          au.churchId,
+          campusId,
+          serviceId,
+          serviceTimeId,
+          groupId
+        );
+        return data;
+      }
+    });
+  }
 
-    @httpGet("/groups")
-    public async group(req: express.Request<{}, {}, null>, res: express.Response): Promise<interfaces.IHttpActionResult> {
-        return this.actionWrapper(req, res, async (au) => {
-            if (!au.checkAccess(Permissions.attendance.view)) return this.json({}, 401);
-            else {
-                const serviceId = (req.query.serviceId === undefined) ? "" : req.query.serviceId.toString();
-                const week = (req.query.week === undefined) ? new Date() : Date.parse(req.query.week.toString());
-                const data = await this.repositories.attendance.loadGroups(au.churchId, serviceId, new Date(week));
-                return data;
-            }
-        });
-    }
+  @httpGet("/groups")
+  public async group(req: express.Request<{}, {}, null>, res: express.Response): Promise<interfaces.IHttpActionResult> {
+    return this.actionWrapper(req, res, async (au) => {
+      if (!au.checkAccess(Permissions.attendance.view)) return this.json({}, 401);
+      else {
+        const serviceId = req.query.serviceId === undefined ? "" : req.query.serviceId.toString();
+        const week = req.query.week === undefined ? new Date() : Date.parse(req.query.week.toString());
+        const data = await this.repositories.attendance.loadGroups(au.churchId, serviceId, new Date(week));
+        return data;
+      }
+    });
+  }
 
-    @httpGet("/search")
-    public async search(req: express.Request<{}, {}, null>, res: express.Response): Promise<interfaces.IHttpActionResult> {
-        return this.actionWrapper(req, res, async (au) => {
-            if (!au.checkAccess(Permissions.attendance.view)) return this.json({}, 401);
-            else {
-                let result = null;
-                const campusId = (req.query.campusId === undefined) ? "" : req.query.campusId.toString();
-                const serviceId = (req.query.serviceId === undefined) ? "" : req.query.serviceId.toString();
-                const serviceTimeId = (req.query.serviceTimeId === undefined) ? "" : req.query.serviceTimeId.toString();
-                const groupId = (req.query.groupId === undefined) ? "" : req.query.groupId.toString();
-                const startDate = (req.query.startDate !== undefined) && new Date(req.query.startDate.toString());
-                const endDate = (req.query.endDate !== undefined) && new Date(req.query.endDate.toString());
+  @httpGet("/search")
+  public async search(
+    req: express.Request<{}, {}, null>,
+    res: express.Response
+  ): Promise<interfaces.IHttpActionResult> {
+    return this.actionWrapper(req, res, async (au) => {
+      if (!au.checkAccess(Permissions.attendance.view)) return this.json({}, 401);
+      else {
+        let result = null;
+        const campusId = req.query.campusId === undefined ? "" : req.query.campusId.toString();
+        const serviceId = req.query.serviceId === undefined ? "" : req.query.serviceId.toString();
+        const serviceTimeId = req.query.serviceTimeId === undefined ? "" : req.query.serviceTimeId.toString();
+        const groupId = req.query.groupId === undefined ? "" : req.query.groupId.toString();
+        const startDate = req.query.startDate !== undefined && new Date(req.query.startDate.toString());
+        const endDate = req.query.endDate !== undefined && new Date(req.query.endDate.toString());
 
-                if (campusId !== "") {
-                    result = await this.repositories.attendance.loadByCampusId(au.churchId, campusId, startDate, endDate);
-                }
-                else if (serviceId !== "") {
-                    result = await this.repositories.attendance.loadByServiceId(au.churchId, serviceId, startDate, endDate);
-                }
-                else if (serviceTimeId !== "") {
-                    result = await this.repositories.attendance.loadByServiceTimeId(au.churchId, serviceTimeId, startDate, endDate);
-                }
-                else if (groupId !== "") {
-                    result = await this.repositories.attendance.loadByGroupId(au.churchId, groupId, startDate, endDate);
-                }
-                else {
-                    result = await this.repositories.visit.loadAllByDate(au.churchId, startDate, endDate);
-                }
+        if (campusId !== "") {
+          result = await this.repositories.attendance.loadByCampusId(au.churchId, campusId, startDate, endDate);
+        } else if (serviceId !== "") {
+          result = await this.repositories.attendance.loadByServiceId(au.churchId, serviceId, startDate, endDate);
+        } else if (serviceTimeId !== "") {
+          result = await this.repositories.attendance.loadByServiceTimeId(
+            au.churchId,
+            serviceTimeId,
+            startDate,
+            endDate
+          );
+        } else if (groupId !== "") {
+          result = await this.repositories.attendance.loadByGroupId(au.churchId, groupId, startDate, endDate);
+        } else {
+          result = await this.repositories.visit.loadAllByDate(au.churchId, startDate, endDate);
+        }
 
-                return result;
-            }
-        });
-    }
+        return result;
+      }
+    });
+  }
 
-    @httpGet("/")
-    public async load(req: express.Request<{}, {}, null>, res: express.Response): Promise<interfaces.IHttpActionResult> {
-        return this.actionWrapper(req, res, async (au) => {
-            const personId = (req.query.personId === undefined) ? "" : req.query.personId.toString();
-            let result = null;
+  @httpGet("/")
+  public async load(req: express.Request<{}, {}, null>, res: express.Response): Promise<interfaces.IHttpActionResult> {
+    return this.actionWrapper(req, res, async (au) => {
+      const personId = req.query.personId === undefined ? "" : req.query.personId.toString();
+      let result = null;
 
-            if (personId !== "") {
-                if (!au.checkAccess(Permissions.attendance.view)) return this.json({}, 401);
-                else result = await this.repositories.attendance.loadForPerson(au.churchId, personId);
-            }
-            /*else {
-                if (!au.checkAccess("Attendance", "View Summary")) return this.json({}, 401);
-                else {
-                    const campusId = (req.query.campusId === undefined) ? 0 : parseInt(req.query.campusId.toString(), 0);
-                    const serviceId = (req.query.serviceId === undefined) ? 0 : parseInt(req.query.serviceId.toString(), 0);
-                    const serviceTimeId = (req.query.serviceTimeId === undefined) ? 0 : parseInt(req.query.serviceTimeId.toString(), 0);
-                    const groupId = (req.query.groupId === undefined) ? 0 : parseInt(req.query.groupId.toString(), 0);
-                    const categoryName = (req.query.categoryName === undefined) ? "" : req.query.categoryName.toString();
-                    const startDate = (req.query.startDate === undefined) ? null : new Date(req.query.startDate.toString());
-                    const endDate = (req.query.endDate === undefined) ? null : new Date(req.query.endDate.toString());
-                    const groupBy = (req.query.groupBy === undefined) ? "" : req.query.groupBy.toString();
-                    const trend = (req.query.trend === undefined) ? false : req.query.trend.toString() === "true";
-                    result = await this.repositories.attendance.load(au.churchId, campusId, serviceId, serviceTimeId, categoryName, groupId, startDate, endDate, groupBy, trend);
-                }
-            }*/
-            return this.repositories.attendance.convertAllToModel(au.churchId, result);
-        });
-    }
-
+      if (personId !== "") {
+        if (!au.checkAccess(Permissions.attendance.view)) return this.json({}, 401);
+        else result = await this.repositories.attendance.loadForPerson(au.churchId, personId);
+      }
+      return this.repositories.attendance.convertAllToModel(au.churchId, result);
+    });
+  }
 }

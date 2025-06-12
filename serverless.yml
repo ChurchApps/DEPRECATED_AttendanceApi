@@ -1,21 +1,19 @@
 service: attendance-api
 
 custom:
-  serverless-layers:
-    dependenciesPath: ./package.json
-    layersDeploymentBucket: "lcs-layers"
   env: ${lower(${opt:stage, self:provider.stage})}
+  layerName: ${self:service}-dependencies-${self:custom.env}
   vpcSettings:
     prod:
       securityGroupIds:
         - sg-052314a1eec2f2567
       subnetIds:
         - subnet-01a6b61d749d10c46
-    current: ${ternary( ${self:custom.env}, prod, ${self:custom.vpcSettings.prod}, ~ )}
+    current: ${self:custom.vpcSettings.${self:custom.env}, ''}
 
 provider:
   name: aws
-  runtime: nodejs18.x
+  runtime: nodejs20.x
   memorySize: 1024
   timeout: 10
   region: us-east-2
@@ -23,15 +21,40 @@ provider:
     role: arn:aws:iam::428019619026:role/ChurchAppsRole
   environment:
     APP_ENV: ${self:custom.env}
+    NODE_OPTIONS: '--enable-source-maps'
+
+layers:
+  dependencies:
+    name: ${self:custom.layerName}
+    description: Dependencies layer for ${self:service}
+    compatibleRuntimes:
+      - nodejs20.x
+    licenseInfo: MIT
+    path: layer
+    package:
+      artifact: layer.zip
+    retain: false
 
 functions:
   api:
     handler: lambda.universal
+    layers:
+      - { Ref: DependenciesLambdaLayer }
     events:
-      - http: ANY {proxy+}
-      - http: ANY /
-    vpc: ${self:custom.vpcSettings.current}
+      - http:
+          path: '{proxy+}'
+          method: ANY
+          cors: true
+      - http:
+          path: /
+          method: ANY
+          cors: true
+    vpc: ${self:custom.vpcSettings.current, ''}
+    package:
+      patterns:
+        - '!node_modules/**'
+        - '!layer/**'
+        - '!layer.zip'
 
 plugins:
-  - serverless-layers
   - serverless-plugin-utils

@@ -97,6 +97,10 @@ dist
 # Serverless directories
 .serverless/
 
+# Lambda layer artifacts
+/layer/
+layer.zip
+
 # FuseBox cache
 .fusebox/
 
