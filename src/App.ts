@@ -1,5 +1,4 @@
 import dotenv from "dotenv";
-import bodyParser from "body-parser";
 import "reflect-metadata";
 import { Container } from "inversify";
 import { InversifyExpressServer } from "inversify-express-utils";
@@ -77,8 +76,8 @@ export const init = async () => {
             next();
         });
         
-        expApp.use(bodyParser.urlencoded({ extended: true }));
-        expApp.use(bodyParser.json({ limit: "50mb" }));
+        // Note: No standard body-parser middleware needed
+        // Custom buffer handling above replaces the need for body-parser
     };
 
     const server = app.setConfig(configFunction).build();
