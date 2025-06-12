@@ -16,10 +16,10 @@ module.exports = [
     },
     rules: {
       '@typescript-eslint/no-unused-vars': 'warn',
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/no-require-imports': 'error',
-      'no-console': 'warn',
+      'no-console': 'off',
       'prefer-const': 'error'
     }
   }

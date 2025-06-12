@@ -2,5 +2,5 @@ import { AsyncContainerModule } from "inversify";
 
 // This is where all of the binding for constructor injection takes place
 export const bindings = new AsyncContainerModule(async () => {
-    await import("./controllers");
+  await import("./controllers");
 });
