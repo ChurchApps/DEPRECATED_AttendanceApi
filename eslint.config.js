@@ -19,7 +19,7 @@ module.exports = [
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/no-require-imports': 'error',
-      'no-console': 'off',
+      'no-console': 'error',
       'prefer-const': 'error'
     }
   }
