@@ -22,6 +22,10 @@ provider:
   environment:
     APP_ENV: ${self:custom.env}
     NODE_OPTIONS: '--enable-source-maps'
+  apiGateway:
+    throttle:
+      rateLimit: 5     # 5 requests per second per IP
+      burstLimit: 20   # Allow bursts up to 20 requests per second
 
 layers:
   dependencies:
