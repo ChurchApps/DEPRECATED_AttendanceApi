@@ -1,4 +1,4 @@
-import { controller, httpPost, httpGet, interfaces, requestParam, httpDelete } from "inversify-express-utils";
+import { controller, httpPost, httpGet, requestParam, httpDelete } from "inversify-express-utils";
 import express from "express";
 import { AttendanceBaseController } from "./AttendanceBaseController";
 import { Visit, VisitSession, Session } from "../models";
@@ -35,10 +35,7 @@ export class VisitController extends AttendanceBaseController {
   }
 
   @httpGet("/checkin")
-  public async getCheckin(
-    req: express.Request<{}, {}, null>,
-    res: express.Response
-  ): Promise<interfaces.IHttpActionResult> {
+  public async getCheckin(req: express.Request<{}, {}, null>, res: express.Response): Promise<unknown> {
     return this.actionWrapper(req, res, async (au) => {
       if (!au.checkAccess(Permissions.attendance.view) && !au.checkAccess(Permissions.attendance.checkin))
         return this.json({}, 401);
@@ -54,27 +51,32 @@ export class VisitController extends AttendanceBaseController {
 
         const lastDate = await this.repositories.visit.loadLastLoggedDate(au.churchId, serviceId, peopleIds);
 
-        const visits =
+        const visits: Visit[] =
           peopleIds.length === 0
             ? []
             : this.repositories.visit.convertAllToModel(
                 au.churchId,
-                await this.repositories.visit.loadByServiceDatePeopleIds(au.churchId, serviceId, lastDate, peopleIds)
+                (await this.repositories.visit.loadByServiceDatePeopleIds(
+                  au.churchId,
+                  serviceId,
+                  lastDate,
+                  peopleIds
+                )) as any
               );
 
         const visitIds: string[] = [];
         if (visits.length > 0) {
           visits?.forEach((v) => visitIds.push(v.id));
-          const visitSessions = this.repositories.visitSession.convertAllToModel(
+          const visitSessions: VisitSession[] = this.repositories.visitSession.convertAllToModel(
             au.churchId,
-            await this.repositories.visitSession.loadByVisitIds(au.churchId, visitIds)
+            (await this.repositories.visitSession.loadByVisitIds(au.churchId, visitIds)) as any
           );
           if (visitSessions.length > 0) {
             const sessionIds: string[] = [];
             visitSessions.forEach((vs) => sessionIds.push(vs.sessionId));
-            const sessions = this.repositories.session.convertAllToModel(
+            const sessions: Session[] = this.repositories.session.convertAllToModel(
               au.churchId,
-              await this.repositories.session.loadByIds(au.churchId, sessionIds)
+              (await this.repositories.session.loadByIds(au.churchId, sessionIds)) as any
             );
             visits?.forEach((v) => {
               v.visitSessions = [];
@@ -108,10 +110,7 @@ export class VisitController extends AttendanceBaseController {
   }
 
   @httpPost("/checkin")
-  public async postCheckin(
-    req: express.Request<{}, {}, Visit[]>,
-    res: express.Response
-  ): Promise<interfaces.IHttpActionResult> {
+  public async postCheckin(req: express.Request<{}, {}, Visit[]>, res: express.Response): Promise<unknown> {
     return this.actionWrapper(req, res, async (au) => {
       if (!au.checkAccess(Permissions.attendance.edit) && !au.checkAccess(Permissions.attendance.checkin))
         return this.json({}, 401);
@@ -145,18 +144,23 @@ export class VisitController extends AttendanceBaseController {
         });
 
         const existingVisitIds: string[] = [];
-        const existingVisits =
+        const existingVisits: Visit[] =
           peopleIds.length === 0
             ? []
             : this.repositories.visit.convertAllToModel(
                 au.churchId,
-                await this.repositories.visit.loadByServiceDatePeopleIds(au.churchId, serviceId, currentDate, peopleIds)
+                (await this.repositories.visit.loadByServiceDatePeopleIds(
+                  au.churchId,
+                  serviceId,
+                  currentDate,
+                  peopleIds
+                )) as any
               );
         if (existingVisits.length > 0) {
           existingVisits.forEach((v) => existingVisitIds.push(v.id));
-          const visitSessions = this.repositories.visitSession.convertAllToModel(
+          const visitSessions: VisitSession[] = this.repositories.visitSession.convertAllToModel(
             au.churchId,
-            await this.repositories.visitSession.loadByVisitIds(au.churchId, existingVisitIds)
+            (await this.repositories.visitSession.loadByVisitIds(au.churchId, existingVisitIds)) as any
           );
           this.populateDeleteIds(existingVisits, submittedVisits, visitSessions, deleteVisitIds, deleteVisitSessionIds);
         }
@@ -181,7 +185,7 @@ export class VisitController extends AttendanceBaseController {
     @requestParam("id") id: string,
     req: express.Request<{}, {}, null>,
     res: express.Response
-  ): Promise<interfaces.IHttpActionResult> {
+  ): Promise<unknown> {
     return this.actionWrapper(req, res, async (au) => {
       if (!au.checkAccess(Permissions.attendance.view)) return this.json({}, 401);
       else
@@ -190,10 +194,7 @@ export class VisitController extends AttendanceBaseController {
   }
 
   @httpGet("/")
-  public async getAll(
-    req: express.Request<{}, {}, null>,
-    res: express.Response
-  ): Promise<interfaces.IHttpActionResult> {
+  public async getAll(req: express.Request<{}, {}, null>, res: express.Response): Promise<unknown> {
     return this.actionWrapper(req, res, async (au) => {
       if (!au.checkAccess(Permissions.attendance.view)) return this.json({}, 401);
       else {
@@ -201,16 +202,13 @@ export class VisitController extends AttendanceBaseController {
         if (req.query.personId !== undefined)
           result = await this.repositories.visit.loadForPerson(au.churchId, req.query.personId.toString());
         else result = await this.repositories.visit.loadAll(au.churchId);
-        return this.repositories.visit.convertAllToModel(au.churchId, result);
+        return this.repositories.visit.convertAllToModel(au.churchId, result as any);
       }
     });
   }
 
   @httpPost("/")
-  public async save(
-    req: express.Request<{}, {}, Visit[]>,
-    res: express.Response
-  ): Promise<interfaces.IHttpActionResult> {
+  public async save(req: express.Request<{}, {}, Visit[]>, res: express.Response): Promise<unknown> {
     return this.actionWrapper(req, res, async (au) => {
       if (!au.checkAccess(Permissions.attendance.edit)) return this.json({}, 401);
       else {
@@ -230,7 +228,7 @@ export class VisitController extends AttendanceBaseController {
     @requestParam("id") id: string,
     req: express.Request<{}, {}, null>,
     res: express.Response
-  ): Promise<interfaces.IHttpActionResult> {
+  ): Promise<unknown> {
     return this.actionWrapper(req, res, async (au) => {
       if (!au.checkAccess(Permissions.attendance.edit)) return this.json({}, 401);
       else {

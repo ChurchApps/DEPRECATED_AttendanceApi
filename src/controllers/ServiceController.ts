@@ -1,4 +1,4 @@
-import { controller, httpPost, httpGet, interfaces, requestParam, httpDelete } from "inversify-express-utils";
+import { controller, httpPost, httpGet, requestParam, httpDelete } from "inversify-express-utils";
 import express from "express";
 import { AttendanceBaseController } from "./AttendanceBaseController";
 import { Service } from "../models";
@@ -7,15 +7,11 @@ import { Permissions } from "../helpers";
 @controller("/services")
 export class ServiceController extends AttendanceBaseController {
   @httpGet("/search")
-  public async search(
-    req: express.Request<{}, {}, null>,
-    res: express.Response
-  ): Promise<interfaces.IHttpActionResult> {
+  public async search(req: express.Request<{}, {}, null>, res: express.Response): Promise<unknown> {
     return this.actionWrapper(req, res, async (au) => {
-      return this.repositories.service.convertAllToModel(
-        au.churchId,
-        await this.repositories.service.searchByCampus(au.churchId, req.query.campusId.toString())
-      );
+      const data = await this.repositories.service.searchByCampus(au.churchId, req.query.campusId.toString());
+      const dataArray = (data as any)?.rows || data || [];
+      return this.repositories.service.convertAllToModel(au.churchId, dataArray);
     });
   }
 
@@ -24,7 +20,7 @@ export class ServiceController extends AttendanceBaseController {
     @requestParam("id") id: string,
     req: express.Request<{}, {}, null>,
     res: express.Response
-  ): Promise<interfaces.IHttpActionResult> {
+  ): Promise<unknown> {
     return this.actionWrapper(req, res, async (au) => {
       return this.repositories.service.convertToModel(
         au.churchId,
@@ -34,21 +30,16 @@ export class ServiceController extends AttendanceBaseController {
   }
 
   @httpGet("/")
-  public async getAll(
-    req: express.Request<{}, {}, null>,
-    res: express.Response
-  ): Promise<interfaces.IHttpActionResult> {
+  public async getAll(req: express.Request<{}, {}, null>, res: express.Response): Promise<unknown> {
     return this.actionWrapper(req, res, async (au) => {
       const data = await this.repositories.service.loadWithCampus(au.churchId);
-      return this.repositories.service.convertAllToModel(au.churchId, data);
+      const dataArray = (data as any)?.rows || data || [];
+      return this.repositories.service.convertAllToModel(au.churchId, dataArray);
     });
   }
 
   @httpPost("/")
-  public async save(
-    req: express.Request<{}, {}, Service[]>,
-    res: express.Response
-  ): Promise<interfaces.IHttpActionResult> {
+  public async save(req: express.Request<{}, {}, Service[]>, res: express.Response): Promise<unknown> {
     return this.actionWrapper(req, res, async (au) => {
       if (!au.checkAccess(Permissions.services.edit)) return this.json({}, 401);
       else {
@@ -68,7 +59,7 @@ export class ServiceController extends AttendanceBaseController {
     @requestParam("id") id: string,
     req: express.Request<{}, {}, null>,
     res: express.Response
-  ): Promise<interfaces.IHttpActionResult> {
+  ): Promise<unknown> {
     return this.actionWrapper(req, res, async (au) => {
       if (!au.checkAccess(Permissions.services.edit)) return this.json({}, 401);
       else {

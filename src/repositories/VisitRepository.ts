@@ -97,7 +97,7 @@ export class VisitRepository {
       ArrayHelper.fillArray("?", peopleIds.length).join(", ") +
       ")";
     const params = [churchId, serviceId].concat(peopleIds);
-    const data = await DB.queryOne(sql, params);
+    const data: any = await DB.queryOne(sql, params);
 
     if (data?.visitDate) result = new Date(data.visitDate);
     return result;

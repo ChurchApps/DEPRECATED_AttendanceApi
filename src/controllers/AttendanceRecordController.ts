@@ -1,4 +1,4 @@
-import { controller, httpGet, interfaces } from "inversify-express-utils";
+import { controller, httpGet } from "inversify-express-utils";
 import express from "express";
 import { AttendanceBaseController } from "./AttendanceBaseController";
 import { Permissions } from "../helpers";
@@ -6,15 +6,16 @@ import { Permissions } from "../helpers";
 @controller("/attendancerecords")
 export class AttendanceRecordController extends AttendanceBaseController {
   @httpGet("/tree")
-  public async tree(req: express.Request<{}, {}, null>, res: express.Response): Promise<interfaces.IHttpActionResult> {
+  public async tree(req: express.Request<{}, {}, null>, res: express.Response): Promise<unknown> {
     return this.actionWrapper(req, res, async (au) => {
       const data = await this.repositories.attendance.loadTree(au.churchId);
-      return this.repositories.attendance.convertAllToModel(au.churchId, data);
+      const dataArray = (data as any)?.rows || data || [];
+      return this.repositories.attendance.convertAllToModel(au.churchId, dataArray);
     });
   }
 
   @httpGet("/trend")
-  public async trend(req: express.Request<{}, {}, null>, res: express.Response): Promise<interfaces.IHttpActionResult> {
+  public async trend(req: express.Request<{}, {}, null>, res: express.Response): Promise<unknown> {
     return this.actionWrapper(req, res, async (au) => {
       if (!au.checkAccess(Permissions.attendance.viewSummary)) return this.json({}, 401);
       else {
@@ -35,7 +36,7 @@ export class AttendanceRecordController extends AttendanceBaseController {
   }
 
   @httpGet("/groups")
-  public async group(req: express.Request<{}, {}, null>, res: express.Response): Promise<interfaces.IHttpActionResult> {
+  public async group(req: express.Request<{}, {}, null>, res: express.Response): Promise<unknown> {
     return this.actionWrapper(req, res, async (au) => {
       if (!au.checkAccess(Permissions.attendance.view)) return this.json({}, 401);
       else {
@@ -48,10 +49,7 @@ export class AttendanceRecordController extends AttendanceBaseController {
   }
 
   @httpGet("/search")
-  public async search(
-    req: express.Request<{}, {}, null>,
-    res: express.Response
-  ): Promise<interfaces.IHttpActionResult> {
+  public async search(req: express.Request<{}, {}, null>, res: express.Response): Promise<unknown> {
     return this.actionWrapper(req, res, async (au) => {
       if (!au.checkAccess(Permissions.attendance.view)) return this.json({}, 401);
       else {
@@ -86,7 +84,7 @@ export class AttendanceRecordController extends AttendanceBaseController {
   }
 
   @httpGet("/")
-  public async load(req: express.Request<{}, {}, null>, res: express.Response): Promise<interfaces.IHttpActionResult> {
+  public async load(req: express.Request<{}, {}, null>, res: express.Response): Promise<unknown> {
     return this.actionWrapper(req, res, async (au) => {
       const personId = req.query.personId === undefined ? "" : req.query.personId.toString();
       let result = null;
@@ -95,7 +93,8 @@ export class AttendanceRecordController extends AttendanceBaseController {
         if (!au.checkAccess(Permissions.attendance.view)) return this.json({}, 401);
         else result = await this.repositories.attendance.loadForPerson(au.churchId, personId);
       }
-      return this.repositories.attendance.convertAllToModel(au.churchId, result);
+      const resultArray = (result as any)?.rows || result || [];
+      return this.repositories.attendance.convertAllToModel(au.churchId, resultArray);
     });
   }
 }

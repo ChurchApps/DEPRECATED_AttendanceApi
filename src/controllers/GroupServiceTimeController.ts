@@ -1,4 +1,4 @@
-import { controller, httpPost, httpGet, interfaces, requestParam, httpDelete } from "inversify-express-utils";
+import { controller, httpPost, httpGet, requestParam, httpDelete } from "inversify-express-utils";
 import express from "express";
 import { AttendanceBaseController } from "./AttendanceBaseController";
 import { GroupServiceTime } from "../models";
@@ -11,20 +11,16 @@ export class GroupServiceTimeController extends AttendanceBaseController {
     @requestParam("id") id: string,
     req: express.Request<{}, {}, null>,
     res: express.Response
-  ): Promise<interfaces.IHttpActionResult> {
+  ): Promise<unknown> {
     return this.actionWrapper(req, res, async (au) => {
-      return this.repositories.groupServiceTime.convertAllToModel(
-        au.churchId,
-        await this.repositories.groupServiceTime.load(au.churchId, id)
-      );
+      const data = await this.repositories.groupServiceTime.load(au.churchId, id);
+      const dataArray = (data as any)?.rows || data || [];
+      return this.repositories.groupServiceTime.convertAllToModel(au.churchId, dataArray);
     });
   }
 
   @httpGet("/")
-  public async getAll(
-    req: express.Request<{}, {}, null>,
-    res: express.Response
-  ): Promise<interfaces.IHttpActionResult> {
+  public async getAll(req: express.Request<{}, {}, null>, res: express.Response): Promise<unknown> {
     return this.actionWrapper(req, res, async (au) => {
       let result = null;
       if (req.query.groupId !== undefined)
@@ -33,15 +29,13 @@ export class GroupServiceTimeController extends AttendanceBaseController {
           req.query.groupId.toString()
         );
       else result = await this.repositories.groupServiceTime.loadAll(au.churchId);
-      return this.repositories.groupServiceTime.convertAllToModel(au.churchId, result);
+      const resultArray = (result as any)?.rows || result || [];
+      return this.repositories.groupServiceTime.convertAllToModel(au.churchId, resultArray);
     });
   }
 
   @httpPost("/")
-  public async save(
-    req: express.Request<{}, {}, GroupServiceTime[]>,
-    res: express.Response
-  ): Promise<interfaces.IHttpActionResult> {
+  public async save(req: express.Request<{}, {}, GroupServiceTime[]>, res: express.Response): Promise<unknown> {
     return this.actionWrapper(req, res, async (au) => {
       if (!au.checkAccess(Permissions.services.edit)) return this.json({}, 401);
       else {
@@ -61,7 +55,7 @@ export class GroupServiceTimeController extends AttendanceBaseController {
     @requestParam("id") id: string,
     req: express.Request<{}, {}, null>,
     res: express.Response
-  ): Promise<interfaces.IHttpActionResult> {
+  ): Promise<unknown> {
     return this.actionWrapper(req, res, async (au) => {
       if (!au.checkAccess(Permissions.services.edit)) return this.json({}, 401);
       else {

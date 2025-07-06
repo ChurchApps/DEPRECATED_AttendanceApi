@@ -20,6 +20,7 @@
     "strict": false,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
+    "incremental": true,
     "paths": {
       "*": [
         "node_modules/*"
