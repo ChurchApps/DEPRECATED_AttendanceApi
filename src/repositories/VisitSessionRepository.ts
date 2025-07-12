@@ -80,8 +80,6 @@ export class VisitSessionRepository {
     const result: VisitSession = { id: data.id, visitId: data.visitId, sessionId: data.sessionId };
     if (data.personId !== undefined) {
       result.visit = { id: result.visitId, personId: data.personId };
-      // result.visit.person = { id: result.visit.personId, photoUpdated: data.photoUpdated, name: { display: data.displayName }, contactInfo: { email: data.email } };
-      // result.visit.person.photo = PersonHelper.getPhotoUrl(churchId, result.visit.person);
     }
     return result;
   }
