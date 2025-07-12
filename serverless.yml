@@ -14,18 +14,21 @@ custom:
 provider:
   name: aws
   runtime: nodejs20.x
-  memorySize: 1024
+  memorySize: 512 # Reduced from 1024MB for cost optimization
   timeout: 10
   region: us-east-2
   iam:
     role: arn:aws:iam::428019619026:role/ChurchAppsRole
   environment:
     APP_ENV: ${self:custom.env}
-    NODE_OPTIONS: '--enable-source-maps'
+    NODE_OPTIONS: "--enable-source-maps"
+  logs:
+    httpApi:
+      logRetentionInDays: 1
   apiGateway:
     throttle:
-      rateLimit: 5     # 5 requests per second per IP
-      burstLimit: 20   # Allow bursts up to 20 requests per second
+      rateLimit: 5 # 5 requests per second per IP
+      burstLimit: 20 # Allow bursts up to 20 requests per second
 
 layers:
   dependencies:
@@ -46,7 +49,7 @@ functions:
       - { Ref: DependenciesLambdaLayer }
     events:
       - http:
-          path: '{proxy+}'
+          path: "{proxy+}"
           method: ANY
           cors: true
       - http:
@@ -56,9 +59,9 @@ functions:
     vpc: ${self:custom.vpcSettings.current, ''}
     package:
       patterns:
-        - '!node_modules/**'
-        - '!layer/**'
-        - '!layer.zip'
+        - "!node_modules/**"
+        - "!layer/**"
+        - "!layer.zip"
 
 plugins:
   - serverless-plugin-utils
